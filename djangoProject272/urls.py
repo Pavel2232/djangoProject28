@@ -21,6 +21,7 @@ from ads.views import AdView, AdDetailView
 from categories.views import CatView, CatDetailView
 
 urlpatterns = [
+    path('/', index.view()),
     path('admin/', admin.site.urls),
     path('ad/', AdView.as_view()),
     path('ad/<int:pk>/', AdDetailView.as_view()),
