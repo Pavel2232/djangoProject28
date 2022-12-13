@@ -17,14 +17,14 @@ from django.contrib import admin
 from django.urls import path
 
 from ads import views
-from ads.views import AdView, AdDetailView
+from ads.views import IndexView,AdView, AdDetailView
 from categories.views import CatView, CatDetailView
 
 urlpatterns = [
-    path('/', index.view()),
+    path('/', IndexView.as_view(), name="index"),
     path('admin/', admin.site.urls),
-    path('ad/', AdView.as_view()),
-    path('ad/<int:pk>/', AdDetailView.as_view()),
-    path('cat/', CatView.as_view()),
-    path('cat/<int:pk>/', CatDetailView.as_view()),
+    path('ad/', AdView.as_view(), name="ad"),
+    path('ad/<int:pk>/', AdDetailView.as_view(), name="ad:pk"),
+    path('cat/', CatView.as_view(), name="categories"),
+    path('cat/<int:pk>/', CatDetailView.as_view(), name="categories:pk"),
 ]
