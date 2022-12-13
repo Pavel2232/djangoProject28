@@ -11,7 +11,13 @@ from ads.models import Ad
 
 
 # Create your views here.
+
 @method_decorator(csrf_exempt, name='dispatch')
+class IndexView(view):
+    def get(self, request,*args,**kwargs):
+        return JsonResponse({"status": "200"}, safe= False)
+
+
 class AdView(ListView):
     def get(self,request,*args,**kwargs):
         ads_query = Ad.objects.all()
