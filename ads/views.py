@@ -13,7 +13,7 @@ from ads.models import Ad
 # Create your views here.
 
 @method_decorator(csrf_exempt, name='dispatch')
-class IndexView(view):
+class IndexView(View):
     def get(self, request,*args,**kwargs):
         return JsonResponse({"status": "200"}, safe= False)
 
