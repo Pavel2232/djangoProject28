@@ -1,14 +1,26 @@
 from django.db import models
 
-# Create your models here.
+from categories.models import Categorie
+from user.models import User
+
+
+
 
 class Ad(models.Model):
     name= models.CharField(max_length=100)
-    author= models.CharField(max_length=200)
+    author= models.ForeignKey(User, related_name='ads',on_delete=models.CASCADE)
     price= models.IntegerField()
-    description= models.CharField(max_length=300)
-    address= models.CharField(max_length=100)
+    description= models.CharField(max_length=1000)
     is_published= models.BooleanField(default=False)
+    image = models.ImageField(upload_to='images/')
+    category = models.ForeignKey(Categorie,on_delete=models.NOT_PROVIDED,null=True)
 
+
+    class Meta:
+        verbose_name = "Обьявление"
+        verbose_name_plural = "Обьявлении"
     def __str__(self):
         return self.name
+
+
+

@@ -12,11 +12,14 @@ from categories.models import Categorie
 # Create your views here.
 @method_decorator(csrf_exempt, name='dispatch')
 class CatView(ListView):
+    model = Categorie
     def get(self,request,*args,**kwargs):
-        ads_query = Categorie.objects.all()
+        super().get(request,*args,**kwargs)
 
-        response = [{"Response" : "200"}]
-        for ad in ads_query:
+        self.object_list = self.object_list.order_by("name")
+
+        response = []
+        for ad in self.object_list:
             response.append({
             "id" : ad.id,
             "name" : ad.name,
