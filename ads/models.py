@@ -13,7 +13,7 @@ class Ad(models.Model):
     description= models.CharField(max_length=1000)
     is_published= models.BooleanField(default=False)
     image = models.ImageField(upload_to='images/')
-    category = models.ForeignKey(Categorie,on_delete=models.NOT_PROVIDED,null=True)
+    category = models.ForeignKey(Categorie,related_name = 'category' ,on_delete=models.NOT_PROVIDED,null=True)
 
 
     class Meta:
@@ -21,6 +21,7 @@ class Ad(models.Model):
         verbose_name_plural = "Обьявлении"
     def __str__(self):
         return self.name
-
-
+    @property
+    def first_name(self):
+        return self.author.first_name if self.author else None
 

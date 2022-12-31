@@ -16,17 +16,25 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
 
 from ads.views import IndexView
-from categories.views import CatView, CatDetailView
+from categories.views import CategoryViewSet
 from djangoProject272 import settings
+from location.views import LocationViewSet
+from user.views import UserViewSet
+
+router= routers.SimpleRouter()
+router.register(r'location', LocationViewSet)
+router.register(r'user',UserViewSet)
+router.register(r'category',CategoryViewSet)
 
 urlpatterns = [
     path('', IndexView.as_view(), name="index"),
     path('admin/', admin.site.urls),
     path('ad/', include('ads.urls'), name = "ad"),
-    path('cat/', include('categories.urls'), name="categorie"),
-    path('user/', include('user.urls'), name="user"),
 ]
+
+urlpatterns += router.urls
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
