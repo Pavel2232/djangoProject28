@@ -9,10 +9,12 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 
-from ads.models import Ad
+from ads.models import Ad, Compilation
+from ads.permissions import UserUpdatePermission
 from ads.serializer import AdListSerializer, AdRetrieveSerializer, AdCreateSerializer, AdUpdateSerializer, \
-    AdDestroyserializer
+    AdDestroyserializer, CompilationSerializer
 from djangoProject272 import settings
 
 
@@ -33,18 +35,12 @@ class AdView(ListAPIView):
 
 
     def get(self, request, *args, **kwargs):
-        ads_id = request.GET.getlist("category",None)
-        ads_name = request.GET.get("name",None)
-        ads_location = request.GET.get("location",None)
-        ads_price = request.GET.getlist("price",None)
-        ads_q_id = None
-        for ad in ads_id:
-            if ads_q_id is None:
-                ads_q_id = Q(category__id__contains= ad)
-            else:
-                ads_q_id |= Q(category__id__contains= ad)
-        if ads_q_id:
-            self.queryset = self.queryset.filter(ads_q_id)
+        ads_id = request.GET.getlist("category")
+        ads_name = request.GET.get("name")
+        ads_location = request.GET.get("location")
+        ads_price = request.GET.getlist("price")
+        if ads_id:
+            self.queryset = self.queryset.filter(category__id__in = ads_id)
 
 
         if ads_name:
@@ -70,6 +66,7 @@ class AdView(ListAPIView):
 class AdDetailView(RetrieveAPIView):
     queryset = Ad
     serializer_class = AdRetrieveSerializer
+    permission_classes = [IsAuthenticated]
 
 
 
@@ -81,8 +78,7 @@ class AdUpdateView(UpdateAPIView):
 class AdDestroyView(DestroyAPIView):
     queryset = Ad
     serializer_class = AdDestroyserializer
-
-
+    permission_classes = (UserUpdatePermission,)
 @method_decorator(csrf_exempt, name='dispatch')
 class Image(UpdateView):
     model = Ad
@@ -99,3 +95,9 @@ class Image(UpdateView):
             "image": self.object.image.url if self.object.image else None,
 
         })
+
+
+
+class CompilationListView(ListAPIView):
+    queryset = Compilation.objects.all()
+    serializer_class = CompilationSerializer

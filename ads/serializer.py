@@ -1,11 +1,12 @@
 from rest_framework import serializers
-from ads.models import Ad
+from ads.models import Ad, Compilation
 from categories.models import Categorie
+from user.models import User
 
 
 class AdListSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True,
-                                          slug_field="first_name")
+                                          slug_field="username")
 
     category = serializers.CharField(max_length=100)
 
@@ -15,7 +16,7 @@ class AdListSerializer(serializers.ModelSerializer):
 
 class AdRetrieveSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(read_only=True,
-                                          slug_field="first_name")
+                                          slug_field="username")
 
     category = serializers.CharField(max_length=100)
 
@@ -90,3 +91,16 @@ class AdDestroyserializer(serializers.ModelSerializer):
     class Meta:
         model = Ad
         fields = ["id"]
+
+
+
+class CompilationSerializer(serializers.ModelSerializer):
+    name = serializers.SlugRelatedField(read_only=True,
+                                          slug_field="username")
+    ads = serializers.SlugRelatedField(read_only=True,
+                                       slug_field="name",
+                                       many=True)
+
+    class Meta:
+        model = Compilation
+        fields = "__all__"

@@ -1,26 +1,31 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from location.models import Location
 
 
-class User(models.Model):
-    ROLE = [
-        ("member","пользователь"),
-        ("admin","администратор"),
-        ("moderator","модератор")
-    ]
+class User(AbstractUser):
+    MEMBER = "member"
+    ADMIN = "admin"
+    MODERATOR = "moderator"
 
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=300)
-    username = models.CharField(max_length=300)
-    password = models.CharField(max_length=100)
+
+    ROLE = [
+        (MEMBER,"member"),
+        (ADMIN,"admin"),
+        (MODERATOR,"moderator")
+    ]
+    SEX = [("Men", "Мужской"),
+           ("Women","Женский"),
+           ]
+
     role = models.CharField(max_length=100,choices= ROLE, default="member")
-    age = models.IntegerField()
-    location = models.ManyToManyField(Location)
+    sex = models.CharField(max_length=8, choices= SEX, default="Man")
+    location = models.ManyToManyField(Location,null=True)
 
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return f"{self.username}  {self.last_name}"
+        return f"{self.username}"

@@ -7,7 +7,7 @@ from user.models import User
 
 
 class Ad(models.Model):
-    name= models.CharField(max_length=100)
+    name= models.CharField(max_length=100, verbose_name="Название")
     author= models.ForeignKey(User, related_name='ads',on_delete=models.CASCADE)
     price= models.IntegerField()
     description= models.CharField(max_length=1000)
@@ -25,3 +25,15 @@ class Ad(models.Model):
     def first_name(self):
         return self.author.first_name if self.author else None
 
+
+
+class Compilation(models.Model):
+    name = models.ForeignKey(User,on_delete=models.CASCADE )
+    ads = models.ManyToManyField(Ad,null=True)
+
+    class Meta:
+        verbose_name = "Подборка"
+        verbose_name_plural = "Подборки"
+
+    def __str__(self):
+        return self.name.username

@@ -18,22 +18,22 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from ads.views import IndexView
+from ads.views import IndexView, CompilationListView
 from categories.views import CategoryViewSet
 from djangoProject272 import settings
 from location.views import LocationViewSet
-from user.views import UserViewSet
 
 router= routers.SimpleRouter()
 router.register(r'location', LocationViewSet)
-router.register(r'user',UserViewSet)
 router.register(r'category',CategoryViewSet)
 
 urlpatterns = [
     path('', IndexView.as_view(), name="index"),
     path('admin/', admin.site.urls),
     path('ad/', include('ads.urls'), name = "ad"),
-]
+    path('user/', include('user.urls'), name = "user"),
+    path('selection/', CompilationListView.as_view(), name = "Compilation"),
+   ]
 
 urlpatterns += router.urls
 if settings.DEBUG:
