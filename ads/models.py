@@ -28,7 +28,9 @@ class Ad(models.Model):
 
 
 class Compilation(models.Model):
-    name = models.ForeignKey(User,on_delete=models.CASCADE )
+
+    author = models.ForeignKey(User,on_delete=models.CASCADE )
+    name = models.CharField(max_length=200)
     ads = models.ManyToManyField(Ad,null=True)
 
     class Meta:
@@ -36,4 +38,4 @@ class Compilation(models.Model):
         verbose_name_plural = "Подборки"
 
     def __str__(self):
-        return self.name.username
+        return self.author.username

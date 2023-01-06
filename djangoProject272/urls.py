@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from ads.views import IndexView, CompilationListView
+from ads.views import IndexView, CompilationListView, CompilationRetrieveView, CompilationCreateView, \
+    CompilationUpdateView, CompilationDestroyView
 from categories.views import CategoryViewSet
 from djangoProject272 import settings
 from location.views import LocationViewSet
@@ -33,6 +34,10 @@ urlpatterns = [
     path('ad/', include('ads.urls'), name = "ad"),
     path('user/', include('user.urls'), name = "user"),
     path('selection/', CompilationListView.as_view(), name = "Compilation"),
+    path('selection/create/', CompilationCreateView.as_view(), name = "Compilation-Add"),
+    path('selection/<int:pk>/', CompilationRetrieveView.as_view(), name = "Compilation"),
+    path('selection/<int:pk>/update/', CompilationUpdateView.as_view(), name = "Compilation-Update"),
+    path('selection/<int:pk>/delete/', CompilationDestroyView.as_view(), name = "Compilation-Delete"),
    ]
 
 urlpatterns += router.urls

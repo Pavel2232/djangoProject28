@@ -1,7 +1,8 @@
+
 from rest_framework import serializers
+
 from ads.models import Ad, Compilation
 from categories.models import Categorie
-from user.models import User
 
 
 class AdListSerializer(serializers.ModelSerializer):
@@ -104,3 +105,86 @@ class CompilationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Compilation
         fields = "__all__"
+
+class CompilationRetrieveSerializer(serializers.ModelSerializer):
+    name = serializers.SlugRelatedField(read_only=True,
+                                          slug_field="username")
+    ads = AdRetrieveSerializer(many=True)
+
+    class Meta:
+        model = Compilation
+        fields = "__all__"
+
+class CompilationCreateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False)
+
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    ads = serializers.SlugRelatedField(required= False,
+                                       queryset=Ad.objects.all(),
+                                       slug_field="name",
+                                       many=True)
+
+    class Meta:
+        model = Compilation
+        fields = '__all__'
+    def is_valid(self, raise_exception=False):
+        self._author = self.context['request'].user
+        self._ads = self.initial_data.pop("ads")
+        return super().is_valid(raise_exception=raise_exception)
+
+
+    # def save(self):
+    #     author = CurrentUserDefault()
+
+    def create(self, validated_data):
+        compilation = Compilation.objects.create(**validated_data)
+
+        for ad in self._ads:
+            ads_obj, _ = Ad.objects.get_or_create(id= ad)
+            compilation.ads.add(ads_obj)
+
+
+        compilation.save()
+
+        return compilation
+
+class CompilationUpdateSerializer(serializers.ModelSerializer):
+
+
+    author = serializers.SlugRelatedField(read_only=True,
+                                          slug_field="username"
+                                                     "")
+    name = serializers.CharField(max_length=100)
+
+    ads = serializers.SlugRelatedField(
+        required=False,
+        queryset=Ad.objects.all(),
+        slug_field="name",
+        many=True
+    )
+
+
+    def is_valid(self, raise_exception=False):
+        self._ads = self.initial_data.pop("ads")
+        super().is_valid(raise_exception=raise_exception)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name",instance.name)
+        ads = []
+        for ad in self._ads:
+            obj, _= Ad.objects.get_or_create(id= ad)
+            ads.append(obj)
+        instance.ads.set(ads)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Compilation
+        fields = '__all__'
+
+
+class CompilationDestroySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Compilation
+        fields = ["id"]

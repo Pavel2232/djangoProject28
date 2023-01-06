@@ -1,21 +1,17 @@
-import json
 
-from django.core.exceptions import ValidationError
-from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
+from django.views.generic import UpdateView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from ads.models import Ad, Compilation
-from ads.permissions import UserUpdatePermission
+from ads.permissions import  UserPermission, UserPathchrmission
 from ads.serializer import AdListSerializer, AdRetrieveSerializer, AdCreateSerializer, AdUpdateSerializer, \
-    AdDestroyserializer, CompilationSerializer
-from djangoProject272 import settings
+    AdDestroyserializer, CompilationSerializer, CompilationRetrieveSerializer, CompilationCreateSerializer, \
+    CompilationUpdateSerializer, CompilationDestroySerializer
 
 
 class IndexView(ListAPIView):
@@ -78,7 +74,7 @@ class AdUpdateView(UpdateAPIView):
 class AdDestroyView(DestroyAPIView):
     queryset = Ad
     serializer_class = AdDestroyserializer
-    permission_classes = (UserUpdatePermission,)
+    permission_classes = (UserPermission,)
 @method_decorator(csrf_exempt, name='dispatch')
 class Image(UpdateView):
     model = Ad
@@ -101,3 +97,23 @@ class Image(UpdateView):
 class CompilationListView(ListAPIView):
     queryset = Compilation.objects.all()
     serializer_class = CompilationSerializer
+
+
+class CompilationRetrieveView(RetrieveAPIView):
+    queryset = Compilation
+    serializer_class = CompilationRetrieveSerializer
+
+
+class CompilationCreateView(CreateAPIView):
+    queryset = Compilation
+    serializer_class = CompilationCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+class CompilationUpdateView(UpdateAPIView):
+    queryset = Compilation
+    serializer_class = CompilationUpdateSerializer
+    permission_classes = (UserPathchrmission,)
+class CompilationDestroyView(DestroyAPIView):
+    queryset = Compilation
+    serializer_class = CompilationDestroySerializer
+    permission_classes = (UserPermission,)

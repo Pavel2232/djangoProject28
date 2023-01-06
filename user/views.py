@@ -1,5 +1,4 @@
 from rest_framework.generics import CreateAPIView
-from rest_framework.viewsets import ModelViewSet, ViewSet
 
 from user.models import User
 from user.serializer import UserCreateSerializer
