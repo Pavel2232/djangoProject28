@@ -22,6 +22,7 @@ class IndexView(ListAPIView):
 class AdCreateView(CreateAPIView):
     queryset = Ad
     serializer_class = AdCreateSerializer
+    permission_classes = [IsAuthenticated]
 
 
 

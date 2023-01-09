@@ -1,4 +1,6 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
 from django.db import models
 
 from location.models import Location
@@ -22,7 +24,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=100,choices= ROLE, default="member")
     sex = models.CharField(max_length=8, choices= SEX, default="Man")
     location = models.ManyToManyField(Location,null=True)
-
+    birth_date = models.DateField(null=True)
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

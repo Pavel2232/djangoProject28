@@ -31,40 +31,40 @@ class AdCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
         required=False,
         queryset=Categorie.objects.all(),
-        slug_field = "name"
+        slug_field = "slug"
     )
 
     image = serializers.CharField(max_length=200)
 
-    class Meta:
-        model = Ad
-        fields = '__all__'
 
     def is_valid(self,raise_exception=False):
         self._category = self.initial_data.pop("category")
-        return  super().is_valid(raise_exception=raise_exception)
+        super().is_valid(raise_exception=raise_exception)
 
 
     def create(self, validated_data):
         ads = Ad.objects.create(**validated_data)
 
-        categ_obj,_ = Categorie.objects.get_or_create(name=self._category)
+        categ_obj,_ = Categorie.objects.get_or_create(slug=self._category)
 
         ads.category = categ_obj
         ads.save()
 
         return ads
 
+    class Meta:
+        model = Ad
+        fields = '__all__'
 
 class AdUpdateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     author = serializers.SlugRelatedField(read_only=True,
-                                          slug_field="first_name")
+                                          slug_field="username")
 
     category = serializers.SlugRelatedField(
         required=False,
         queryset=Categorie.objects.all(),
-        slug_field = "name"
+        slug_field = "slug"
     )
 
     image = serializers.CharField(max_length=200)
@@ -80,7 +80,7 @@ class AdUpdateSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         ads = super().save()
 
-        categ_obj,_ = Categorie.objects.get_or_create(name=self._category)
+        categ_obj,_ = Categorie.objects.get_or_create(slug=self._category)
 
         ads.category = categ_obj
         ads.save()
@@ -133,9 +133,6 @@ class CompilationCreateSerializer(serializers.ModelSerializer):
         self._ads = self.initial_data.pop("ads")
         return super().is_valid(raise_exception=raise_exception)
 
-
-    # def save(self):
-    #     author = CurrentUserDefault()
 
     def create(self, validated_data):
         compilation = Compilation.objects.create(**validated_data)
